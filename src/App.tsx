@@ -188,7 +188,7 @@ export default function App() {
       <Header onPalette={() => setPalette(true)} menu={menu} setMenu={setMenu} />
       <CommandPalette isOpen={palette} onClose={() => setPalette(false)} nav={nav} />
 
-      <main className="relative z-[1]">
+      <main className="relative z-[1] overflow-x-clip">
         <Hero ready={ready} />
         <VelocityMarquee items={marquee} />
         <About />

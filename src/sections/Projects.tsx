@@ -72,7 +72,7 @@ function BrowserShot({ p, tilt }: { p: Project; tilt: boolean }) {
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-          <span className="mx-auto truncate rounded-md bg-ink px-4 py-1 font-mono text-[11px] text-dim">{p.url}</span>
+          <span className="mx-auto min-w-0 truncate rounded-md bg-ink px-4 py-1 font-mono text-[11px] text-dim">{p.url}</span>
         </div>
         <img src={p.shot} width={1600} height={1000} alt={p.shotAlt} className="block aspect-[16/10] w-full object-cover object-left-top" loading="lazy" />
       </div>
@@ -213,7 +213,7 @@ function HorizontalGallery() {
 
 function StackedGallery() {
   return (
-    <div className="mx-auto grid max-w-7xl gap-6 px-5 md:grid-cols-2">
+    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-5 md:grid-cols-2">
       {projects.map((p, i) => (
         <Reveal key={p.id} delay={(i % 2) * 0.08}>
           <Card acc={p.acc} className="h-full">
@@ -259,7 +259,7 @@ export default function Projects() {
             <span className="h-px w-10 bg-gradient-to-r from-neon to-transparent" /> Security labs
           </h3>
         </Reveal>
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {labs.map((l, i) => (
             <Reveal key={l.id} delay={(i % 2) * 0.08}>
               <Card acc={labAcc[i % labAcc.length]} className="h-full">
@@ -267,7 +267,7 @@ export default function Projects() {
                   <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
                   <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
                   <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-                  <span className="ml-2 truncate font-mono text-xs text-dim">
+                  <span className="ml-2 min-w-0 truncate font-mono text-xs text-dim">
                     {l.id} · {l.slug}
                   </span>
                   <span className="ml-auto shrink-0">
