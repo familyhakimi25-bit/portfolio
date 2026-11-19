@@ -1,0 +1,29 @@
+# Kept local only (public repo): the web-resume builder names the FYP client and
+# reads ..\resume-build; the deploy notes are personal and mention the barbershop site's setup.
+tools/
+DEPLOY-VERCEL.md
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

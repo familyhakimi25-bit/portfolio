@@ -1,0 +1,216 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded", "Inter Variable", sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  --color-ink: #050608;
+  --color-panel: #0a0d13;
+  --color-panel-2: #10151d;
+  --color-line: #1c2430;
+  --color-fg: #f2f5f9;
+  --color-muted: #a6b0bf;
+  --color-dim: #7f8a9b;
+  --color-neon: #5ef0ff;
+  --color-iris: #9d7bff;
+  --color-pink: #ff7ad9;
+  --color-mint: #7dffb2;
+  --color-amber: #ffc857;
+}
+
+html {
+  background: var(--color-ink);
+  color-scheme: dark;
+  scroll-padding-top: 5.5rem;
+}
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+::selection { background: rgba(94, 240, 255, 0.28); }
+:focus-visible { outline: 2px solid var(--color-neon); outline-offset: 3px; border-radius: 8px; }
+
+/* ---------- type effects ---------- */
+.text-holo {
+  background: linear-gradient(100deg, #5ef0ff 0%, #9d7bff 48%, #ff7ad9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-outline {
+  /* stroke first, then an opaque fill on top: hides the overlapping inner contours of the display font */
+  color: var(--color-ink);
+  -webkit-text-stroke: 3px rgba(242, 245, 249, 0.62);
+  paint-order: stroke fill;
+}
+.text-outline-thin {
+  color: var(--color-panel);
+  -webkit-text-stroke: 2px rgba(242, 245, 249, 0.45);
+  paint-order: stroke fill;
+}
+.text-outline-dim {
+  color: var(--outline-fill, var(--color-ink));
+  -webkit-text-stroke: 2px rgba(242, 245, 249, 0.17);
+  paint-order: stroke fill;
+}
+
+/* ---------- backdrops ---------- */
+.grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 100%);
+}
+.grain {
+  position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: .045;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.blob { position: absolute; border-radius: 9999px; -webkit-mask-image: radial-gradient(closest-side, #000, transparent); mask-image: radial-gradient(closest-side, #000, transparent); scale: 1.5; will-change: transform; }
+@keyframes drift-a { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(60px,40px) scale(1.15); } }
+@keyframes drift-b { 0%,100% { transform: translate(0,0) scale(1.1); } 50% { transform: translate(-50px,30px) scale(.95); } }
+.blob-a { animation: drift-a 16s ease-in-out infinite; }
+.blob-b { animation: drift-b 20s ease-in-out infinite; }
+
+/* ---------- cards ---------- */
+.card {
+  --acc: 94, 240, 255;
+  --outline-fill: #0d1118;
+  position: relative;
+  border: 1px solid var(--color-line);
+  background: linear-gradient(180deg, rgba(16,21,29,.92), rgba(10,13,19,.92));
+  border-radius: 22px;
+  overflow: hidden;
+  transition: border-color .35s;
+}
+.card::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s;
+  background: radial-gradient(440px circle at var(--mx, 50%) var(--my, -20%), rgba(var(--acc), .16), transparent 60%);
+}
+.card::after {
+  content: ""; position: absolute; inset-inline: 18%; top: 0; height: 1px; pointer-events: none; opacity: .55;
+  background: linear-gradient(90deg, transparent, rgba(var(--acc), .9), transparent);
+}
+.card:hover { border-color: rgba(var(--acc), .38); }
+.card:hover::before { opacity: 1; }
+
+/* rotating gradient border */
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes spin-angle { to { --angle: 360deg; } }
+.holo-border { position: relative; padding: 1px; border-radius: 28px; overflow: hidden; background: #1c2430; isolation: isolate; }
+.holo-border::before {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 210%; aspect-ratio: 1; translate: -50% -50%; z-index: -1; will-change: transform;
+  background: conic-gradient(from 0deg, rgba(94,240,255,0) 0deg, rgba(94,240,255,.95) 50deg, rgba(157,123,255,.95) 110deg, rgba(255,122,217,.9) 160deg, rgba(94,240,255,0) 230deg, rgba(94,240,255,0) 360deg);
+  animation: spin-slow 6s linear infinite;
+}
+.holo-border > .holo-inner { border-radius: 27px; }
+
+/* tilt surfaces: glare + foil follow the pointer through --gx / --gy */
+.glare {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s; mix-blend-mode: soft-light;
+  background: radial-gradient(380px circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.75), transparent 60%);
+}
+.foil {
+  position: absolute; inset: 0; pointer-events: none; opacity: .0; transition: opacity .4s; mix-blend-mode: color-dodge;
+  background: linear-gradient(115deg, transparent 22%, rgba(94,240,255,.32) 36%, rgba(157,123,255,.34) 46%, rgba(255,122,217,.3) 56%, transparent 70%);
+  background-size: 260% 260%;
+  background-position: var(--gx, 50%) var(--gy, 50%);
+}
+.tilt:hover .glare { opacity: .55; }
+.tilt:hover .foil { opacity: .9; }
+@keyframes foil-idle { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+@media (hover: none) {
+  .foil { opacity: .55; animation: foil-idle 5s ease-in-out infinite alternate; }
+}
+
+/* id card extras */
+@keyframes scan { 0%, 12% { transform: translateY(-4px); opacity: 0; } 16% { opacity: 1; } 46% { transform: translateY(330px); opacity: 1; } 50%, 100% { transform: translateY(334px); opacity: 0; } }
+.scanline {
+  position: absolute; left: 0; right: 0; top: 0; height: 2px; pointer-events: none; will-change: transform;
+  background: linear-gradient(90deg, transparent, #5ef0ff, transparent);
+  animation: scan 6.5s ease-in-out infinite;
+}
+@keyframes float-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.float-y { animation: float-y 6s ease-in-out infinite; }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 28s linear infinite; }
+.spin-rev { animation: spin-slow 40s linear infinite reverse; }
+.radar { background: conic-gradient(from 0deg, rgba(94,240,255,.22), transparent 24%); animation: spin-slow 5s linear infinite; }
+.barcode {
+  background-image: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 9px, currentColor 9px 12px, transparent 12px 14px);
+}
+.guilloche {
+  background-image:
+    repeating-radial-gradient(circle at 100% 0%, rgba(var(--acc), .09) 0 1px, transparent 1px 9px),
+    repeating-radial-gradient(circle at 0% 100%, rgba(var(--acc), .06) 0 1px, transparent 1px 11px);
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+.caret { animation: blink 1s steps(1) infinite; }
+@keyframes pulse-dot { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(3.2); opacity: 0; } }
+.live-dot { position: relative; }
+.live-dot::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: inherit; animation: pulse-dot 1.8s ease-out infinite; }
+@keyframes scroll-hint { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.scroll-hint { animation: scroll-hint 2.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .blob-a, .blob-b, .holo-border::before, .live-dot::after, .scanline, .float-y, .spin-slow, .spin-rev, .radar, .caret, .live-dot, .scroll-hint, .foil { animation: none; }
+  .scanline { display: none; }
+}
+
+/* ---------- performance ---------- */
+.backdrop-blur { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }   /* keep blur only on the header and overlays */
+#projects .blur-3xl { filter: none; -webkit-mask-image: radial-gradient(closest-side, #000, transparent); mask-image: radial-gradient(closest-side, #000, transparent); }
+.flex.w-max { will-change: transform; }   /* marquee and gallery tracks get their own GPU layer */
+
+/* ---------- light theme ----------
+   Toggled by <html data-theme="light"> (see ThemeToggle + the inline script in index.html).
+   Tailwind v4 utilities read these custom properties, so redefining them re-skins every
+   class at once. --color-white is flipped to near-black on purpose: the dark design uses
+   white/xx for hairlines and glass surfaces, which must become dark/xx on a light page.
+   Neon accents are darkened so accent text stays readable (>= 4.5:1 on the page colour). */
+:root[data-theme="light"] {
+  --color-ink: #f5f7fb;
+  --color-panel: #ffffff;
+  --color-panel-2: #eef2f7;
+  --color-line: #d9e0ea;
+  --color-fg: #0b1220;
+  --color-muted: #475569;
+  --color-dim: #5b6779;
+  --color-neon: #0e7490;
+  --color-iris: #6d28d9;
+  --color-pink: #be185d;
+  --color-mint: #047857;
+  --color-amber: #b45309;
+  --color-white: #0b1220;
+  color-scheme: light;
+}
+:root[data-theme="light"] ::selection { background: rgba(14, 116, 144, 0.2); }
+:root[data-theme="light"] .text-holo { background-image: linear-gradient(100deg, #0e7490 0%, #6d28d9 48%, #be185d 100%); }
+:root[data-theme="light"] .text-outline { -webkit-text-stroke-color: rgba(11, 18, 32, 0.7); }
+:root[data-theme="light"] .text-outline-thin { -webkit-text-stroke-color: rgba(11, 18, 32, 0.5); }
+:root[data-theme="light"] .text-outline-dim { -webkit-text-stroke-color: rgba(11, 18, 32, 0.3); }
+:root[data-theme="light"] .grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(11,18,32,.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11,18,32,.06) 1px, transparent 1px);
+}
+:root[data-theme="light"] .card {
+  --outline-fill: #ffffff;
+  background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(248,250,253,.94));
+  box-shadow: 0 1px 2px rgba(11,18,32,.04), 0 12px 32px -18px rgba(11,18,32,.18);
+}
+:root[data-theme="light"] .holo-border { background: var(--color-line); }
+:root[data-theme="light"] .foil { mix-blend-mode: multiply; }
+:root[data-theme="light"] .tilt:hover .foil { opacity: .35; }
+:root[data-theme="light"] .grain { opacity: .03; }
+
+/* smooth colour change when switching (not on first paint) */
+html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
+  transition: background-color .35s ease, border-color .35s ease, color .35s ease, fill .35s ease !important;
+}
